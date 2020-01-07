@@ -13,15 +13,9 @@ gameRouter.get('/:id', (req, res) => {
 
 gameRouter.post('/', async (req, res) => {
     logger.info('Game creation is initializing ...');
-    const timestamp = moment().utc();
     const { players } = req.body;
-    const gameId = uuid();
-
-    const command = new GameCreateCommand({
-        id: gameId,
-        players,
-        timestamp,
-    });
+    // Create Game command...
+    const command = new GameCreateCommand(players);
     logger.info(`GameCreateCommand is created : ${JSON.stringify(command)}`);
     await gameCommandHandler.handle(command);
     logger.info('Handler is successfully handle command');

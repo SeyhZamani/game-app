@@ -1,30 +1,26 @@
+const {
+    PG_HOST: host,
+    PG_PORT: port,
+    PG_DATABASE: database,
+    PG_USERNAME: user,
+    PG_PASSWORD: password,
+} = process.env;
+
 const knex = require('knex')({
     client: 'pg',
     connection: {
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        password: process.env.DB_PASSWORD,
-        user: process.env.DB_USERNAME,
+        host,
+        port,
+        database,
+        password,
+        user,
     },
-    pool: {
-        afterCreate: function(conn, done) {
-            // in this example we use pg driver's connection API
-            conn.query('SET timezone="UTC";', function(err) {
-                if (err) {
-                    // first query failed, return error and don't try to make next query
-                    done(err, conn);
-                } else {
-                    // do the second query...
-                    conn.query('SELECT set_limit(0.01);', function(err) {
-                        // if err is not falsy, connection is discarded from pool
-                        // if connection aquire was triggered by a query the error is passed to query promise
-                        done(err, conn);
-                    });
-                }
-            });
-        }
-    }
 });
 
+const authenticate = (dbInstance) => dbInstance.raw('SELECT 1+1 as Result');
 
-module.exports = knex;
+
+module.exports = {
+    knex,
+    authenticate,
+};

@@ -1,8 +1,9 @@
-const knex = require('./utils/database');
+const { knex, authenticate } = require('./utils/database');
 const server = require('./server');
 
 const run = async () => {
-    const appServer = server.createServer();
+    await authenticate(knex);
+    server.createServer();
 };
 
 run();

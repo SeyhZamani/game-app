@@ -1,8 +1,9 @@
-class GameCreateCommand {
-    constructor({ id, timestamp, player }) {
-        this.id = id;
-        this.timestamp = timestamp;
-        this.player = player;
+const BaseCommand = require('./base-command');
+
+class GameCreateCommand extends BaseCommand {
+    constructor(players) {
+        super();
+        this.players = players;
     }
 }
 
