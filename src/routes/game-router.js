@@ -1,6 +1,5 @@
 const gameRouter = require('express').Router();
-const moment = require('moment');
-const uuid = require('uuid/v4');
+const uuidv1 = require('uuid/v1');
 const logger = require('../utils/logger');
 const gameCommandHandler = require('../handler/game-command-handler');
 const GameCreateCommand = require('../models/commands/game-create-command');
@@ -13,9 +12,10 @@ gameRouter.get('/:id', (req, res) => {
 
 gameRouter.post('/', async (req, res) => {
     logger.info('Game creation is initializing ...');
-    const { players } = req.body;
+    const { playerIds, gameType } = req.body;
+    const gameId = uuidv1();
     // Create Game command...
-    const command = new GameCreateCommand(players);
+    const command = new GameCreateCommand(gameId, playerIds, gameType);
     logger.info(`GameCreateCommand is created : ${JSON.stringify(command)}`);
     await gameCommandHandler.handle(command);
     logger.info('Handler is successfully handle command');

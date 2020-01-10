@@ -1,16 +1,24 @@
-const uuidv1 = require('uuid/v1');
-const moment = require('moment');
 const BaseEvent = require('./base-event');
-const aggregateTypeMapper = require('../../aggregate-type-mapper');
-const eventTypeMapper = require('../../event-type-mapper');
+const aggregateTypes = require('../aggregate-types');
+const eventTypes = require('../event-types');
+
 
 class GameCreatedEvent extends BaseEvent {
-    constructor(gameCreatedMetadata) {
+    /**
+     * 
+     * @param {string} gameId UUID
+     * @param {timestamp} timestamp
+     * @param {Object} gameCreatedMetadata
+     *  *metadata*
+     * @param {string} gameCreatedMetadata.gameType
+     * @param {Array} gameCreatedMetadata.shuffledPlayerIds
+     */
+    constructor(gameId, timestamp, gameCreatedMetadata) {
         super(
-            uuidv1(),
-            aggregateTypeMapper.GAME,
-            eventTypeMapper.GAME_CREATED,
-            moment().utc(),
+            gameId,
+            aggregateTypes.GAME,
+            eventTypes.GAME_CREATED,
+            timestamp,
             gameCreatedMetadata,
         );
     }

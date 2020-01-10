@@ -1,17 +1,18 @@
+const moment = require('moment');
 const GameCreateCommand = require('./commands/game-create-command');
 const GameCreatedEvent = require('./events/game-created-event');
+const PlayerAssignedEvent = require('./events/player-assigned-event');
+const aggregateTypes = require('./aggregate-types');
 
 class Game {
-    constructor(events) {
-        this.aggregateId = undefined;
-        this.players = [];
+    constructor(events = []) {
+        this.gameId = undefined;
+        this.gameType = undefined;
+        this.playerIds = [];
         this.apply(events);
     }
 
     apply(events) {
-        if (!events || events.length === 0) {
-            return;
-        }
         for (const event of events) {
             switch (event.constructor) {
                 case GameCreatedEvent:
@@ -32,28 +33,56 @@ class Game {
         }
     }
 
-    applyGameCreatedEvent(event) {
-        const { aggregateId, metadata } = event;
-        const { players } = metadata;
-        // Assign aggregateId
-        this.aggregateId = aggregateId;
-        if (!players || players.length <= 1) {
-            throw new TypeError('Players must be valid and length is greater one');
-        }
-        // Assign players
-        for (const player of players) {
-            this.players.push(player);
+    applyGameCreatedEvent(gameCreatedEvent) {
+        const { aggregateId, metadata } = gameCreatedEvent;
+        const { shuffledPlayers, gameType } = metadata;
+        // Assign event metadata to game aggregate instance
+        this.gameId = aggregateId;
+        this.gameType = gameType;
+        for (const player of shuffledPlayers) {
+            this.playerIds.push(player);
         }
     }
 
     processGameCreateCommand(command) {
-        const { players } = command;
+        const events = [];
+        const { gameId, playerIds, gameType } = command;
+        // Shuffle players
+        const shuffledPlayerIds = this.shufflePlayersList(playerIds);
         const gameCreatedMetadata = {
-            players,
+            gameType,
+            shuffledPlayerIds,
         };
-        const event = new GameCreatedEvent(gameCreatedMetadata);
-        this.apply([event]);
-        return event;
+        events.push(new GameCreatedEvent(gameId, moment().utc(), gameCreatedMetadata));
+        for (const playerId of shuffledPlayerIds) {
+            const playerAssignedMetadata = {
+                gameId,
+                gameType,
+                opponents: shuffledPlayerIds.filter((id) => id !== playerIds),
+            };
+            events.push(new PlayerAssignedEvent(playerId, moment().utc(), playerAssignedMetadata));
+        }
+        // Only apply game types
+        this.apply(events.filter((e) => e.aggregate_type_id === aggregateTypes.GAME));
+        return events;
+    }
+
+    /**
+     * The purpose of this function is that
+     * randomly decide the order of players
+     * using [Fisher-Yates shuffle Algorithm ]
+     * @param {Array} playerIds
+     * @returns {Array}
+     */
+    shufflePlayersList(playerIds) {
+        const cloneList = [...playerIds];
+        for (let i = cloneList.length - 1; i > 0; i--) {
+            // Get random number between i and 0
+            const j = Math.floor(Math.random() * (i + 1));
+            // Swap elements
+            [cloneList[i], cloneList[j]] = [cloneList[j], cloneList[i]];
+        }
+        return cloneList;
     }
 }
 

@@ -27,6 +27,7 @@
         "moment": "^2.24.0",
         "pg": "^7.15.1",
         "uuid": "^3.3.3",
+        "validator": "^12.1.0",
         "winston": "^3.2.1"
     },
     "devDependencies": {
