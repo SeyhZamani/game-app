@@ -6,6 +6,10 @@ class Player {
     process(command) {
 
     }
+
+    canPlay() {
+        return true;
+    }
 }
 
 

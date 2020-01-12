@@ -12,6 +12,11 @@ const createServer = () => {
         extended: true,
     }));
     app.use(bodyParser.json());
+    // [TO-DO] Apply middleware
+    app.use((err, req, res, next) => {
+        logger.error(err.stack);
+        res.status(500).send(err.message);
+    });
     app.use('/api', baseRouter);
 
     app.listen(PORT, () => {

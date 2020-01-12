@@ -1,10 +1,9 @@
 const { knex } = require('../utils/database');
 
-class BaseEventStore {
+class BaseEventStoreWriteRepository {
     create(event) {
         return knex('event_store').insert(event);
     }
 }
 
-
-module.exports = BaseEventStore;
+module.exports = BaseEventStoreWriteRepository;

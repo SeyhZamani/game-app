@@ -15,6 +15,7 @@ const knex = require('knex')({
         password,
         user,
     },
+    debug: true,
 });
 
 const authenticate = (dbInstance) => dbInstance.raw('SELECT 1+1 as Result');
