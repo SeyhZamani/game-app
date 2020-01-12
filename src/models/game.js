@@ -1,13 +1,14 @@
 const moment = require('moment');
 const GameCreateCommand = require('./commands/game-create-command');
-const GameCreatedEvent = require('./events/game-created-event');
-const PlayerAssignedEvent = require('./events/player-assigned-event');
+const { GameCreatedEvent, GameCreatedMetadata } = require('./events/game-created-event');
+const { PlayerJoinedToGameEvent, PlayerJoinedToGameMetadata } = require('./events/player-joined-to-game-event');
 const aggregateTypes = require('./aggregate-types');
 
 class Game {
     constructor(events = []) {
         this.gameId = undefined;
         this.gameType = undefined;
+        this.betAmount = undefined;
         this.playerIds = [];
         this.apply(events);
     }
@@ -35,32 +36,31 @@ class Game {
 
     applyGameCreatedEvent(gameCreatedEvent) {
         const { aggregateId, metadata } = gameCreatedEvent;
-        const { shuffledPlayers, gameType } = metadata;
+        const { playerIds, gameType, betAmount } = metadata;
         // Assign event metadata to game aggregate instance
         this.gameId = aggregateId;
         this.gameType = gameType;
-        for (const player of shuffledPlayers) {
-            this.playerIds.push(player);
+        this.betAmount = betAmount;
+        for (const playerId of playerIds) {
+            this.playerIds.push(playerId);
         }
     }
 
     processGameCreateCommand(command) {
         const events = [];
-        const { gameId, playerIds, gameType } = command;
+        const {
+            gameId,
+            playerIds,
+            gameType,
+            betAmount,
+        } = command;
         // Shuffle players
         const shuffledPlayerIds = this.shufflePlayersList(playerIds);
-        const gameCreatedMetadata = {
-            gameType,
-            shuffledPlayerIds,
-        };
+        const gameCreatedMetadata = new GameCreatedMetadata(gameType, shuffledPlayerIds, betAmount);
         events.push(new GameCreatedEvent(gameId, moment().utc(), gameCreatedMetadata));
         for (const playerId of shuffledPlayerIds) {
-            const playerAssignedMetadata = {
-                gameId,
-                gameType,
-                opponents: shuffledPlayerIds.filter((id) => id !== playerIds),
-            };
-            events.push(new PlayerAssignedEvent(playerId, moment().utc(), playerAssignedMetadata));
+            const playerJoinedToGameMetadata = new PlayerJoinedToGameMetadata(gameId, betAmount);
+            events.push(new PlayerJoinedToGameEvent(playerId, moment().utc(), playerJoinedToGameMetadata));
         }
         // Only apply game types
         this.apply(events.filter((e) => e.aggregate_type_id === aggregateTypes.GAME));

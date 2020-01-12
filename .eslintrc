@@ -5,6 +5,7 @@
         "indent": 0,
         "no-tabs": 0,
         "class-methods-use-this": "off",
-        "no-restricted-syntax": "off"
+        "no-restricted-syntax": "off",
+        "max-classes-per-file": "off"
     }
 }
