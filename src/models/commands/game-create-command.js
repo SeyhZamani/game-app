@@ -19,7 +19,6 @@ class GameCreateCommand extends BaseCommand {
         if (!Array.isArray(playerIds) || playerIds.length === 0 || playerIds.some((p) => !validator.isUUID(p))) {
             throw TypeError('PlayerId must be Array and each one must be UUID!');
         }
-
         if (!(Object.values(gameTypes)).includes(gameType)) {
             throw TypeError('Unknown game type!');
         }

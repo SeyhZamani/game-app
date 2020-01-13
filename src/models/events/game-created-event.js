@@ -5,6 +5,11 @@ const eventTypes = require('../event-types');
 const gameTypes = require('../game-types');
 
 class GameCreatedMetadata {
+    /**
+     * @param {string} gameType
+     * @param {Array} playerIds
+     * @param {Number} betAmount
+     */
     constructor(gameType, playerIds, betAmount) {
         if (!Object.values(gameTypes).includes(gameType)) {
             throw new TypeError('GameCreatedMetadata requires valid gameType');
@@ -42,7 +47,7 @@ class GameCreatedEvent extends BaseEvent {
     getMetadata() {
         const metadataObj = JSON.parse(this.metadata);
         const { gameType, playerIds, betAmount } = metadataObj;
-        return new GameCreatedMetadata(gameType, playerIds, betAmount)
+        return new GameCreatedMetadata(gameType, playerIds, betAmount);
     }
 }
 

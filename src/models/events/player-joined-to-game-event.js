@@ -5,6 +5,11 @@ const eventTypes = require('../event-types');
 
 
 class PlayerJoinedToGameMetadata {
+    /**
+     *
+     * @param {string} gameId
+     * @param {Number} betAmount
+     */
     constructor(gameId, betAmount) {
         if (!validator.isUUID(gameId)) {
             throw new TypeError('PlayerJoinedToGameMetadata requires valid gameId!');
@@ -30,7 +35,7 @@ class PlayerJoinedToGameEvent extends BaseEvent {
             aggregateTypes.PLAYER,
             eventTypes.PLAYER_JOINED_TO_GAME,
             timestamp,
-            playerJoinedToGameMetadata,
+            JSON.stringify(playerJoinedToGameMetadata),
         );
     }
 

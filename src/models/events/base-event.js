@@ -27,6 +27,22 @@ class BaseEvent {
         this.metadata = metadata;
     }
 
+    getAggregateId() {
+        return this.aggregate_uuid;
+    }
+
+    getAggregateTypeId() {
+        return this.aggregate_type_id;
+    }
+
+    getEventTypeId() {
+        return this.event_type_id;
+    }
+
+    getTimestamp() {
+        return this.timestamp;
+    }
+
     getMetadata() {
         throw new Error('getMatdata must be implemeted in derived classes!');
     }

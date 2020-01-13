@@ -3,14 +3,16 @@ const uuidv1 = require('uuid/v1');
 const logger = require('../utils/logger');
 const gameCommandHandler = require('../handler/game-command-handler');
 const GameCreateCommand = require('../models/commands/game-create-command');
+const DiceRollCommand = require('../models/commands/dice-roll-command');
+const { routerWrapper } = require('../utils/express-utils');
 
 
-gameRouter.get('/:id', (req, res) => {
+gameRouter.get('/:id', routerWrapper((req, res) => {
     logger.info('Game fetching is called ...');
     return res.sendStatus(200);
-});
+}));
 
-gameRouter.post('/', async (req, res) => {
+gameRouter.post('/', routerWrapper(async (req, res) => {
     logger.info('Game creation is initializing ...');
     const { playerIds, gameType, betAmount } = req.body;
     const gameId = uuidv1();
@@ -18,12 +20,20 @@ gameRouter.post('/', async (req, res) => {
     const command = new GameCreateCommand(gameId, playerIds, gameType, betAmount);
     logger.info(`GameCreateCommand is created : ${JSON.stringify(command)}`);
     await gameCommandHandler.handle(command);
-    logger.info('Handler is successfully handle command');
+    logger.info('Handler successfully handle command');
     return res.sendStatus(200);
-});
+}));
 
-gameRouter.put('/:id', async (req, res) => {
-
-});
+gameRouter.put('/:id', routerWrapper(async (req, res) => {
+    logger.info('Game updation is initializing ...');
+    const { id: gameId } = req.params;
+    const { playerId, dices } = req.body;
+    // Create Game command...
+    const command = new DiceRollCommand(gameId, playerId, dices);
+    logger.info(`DiceRollCommand is created : ${JSON.stringify(command)}`);
+    await gameCommandHandler.handle(command);
+    logger.info('Handler sccessfully handle command');
+    return res.sendStatus(200);
+}));
 
 module.exports = gameRouter;

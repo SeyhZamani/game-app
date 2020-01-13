@@ -15,7 +15,7 @@ const createServer = () => {
     // [TO-DO] Apply middleware
     app.use((err, req, res, next) => {
         logger.error(err.stack);
-        res.status(500).send(err.message);
+        return res.status(500).send(err.message);
     });
     app.use('/api', baseRouter);
 

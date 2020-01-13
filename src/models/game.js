@@ -35,10 +35,9 @@ class Game {
     }
 
     applyGameCreatedEvent(gameCreatedEvent) {
-        const { aggregateId, metadata } = gameCreatedEvent;
-        const { playerIds, gameType, betAmount } = metadata;
+        const { playerIds, gameType, betAmount } = gameCreatedEvent.getMetadata();
         // Assign event metadata to game aggregate instance
-        this.gameId = aggregateId;
+        this.gameId = gameCreatedEvent.getAggregateId();
         this.gameType = gameType;
         this.betAmount = betAmount;
         for (const playerId of playerIds) {
