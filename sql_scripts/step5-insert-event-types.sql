@@ -10,6 +10,11 @@ INSERT INTO public.event_type (id,
 
 INSERT INTO public.event_type (id,
   event_type_desc)
+  VALUES (10003,
+    'Dice Rolled');
+
+INSERT INTO public.event_type (id,
+  event_type_desc)
   VALUES (20001,
     'Player Created');
 

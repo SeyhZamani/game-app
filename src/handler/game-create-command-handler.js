@@ -1,21 +1,23 @@
-const GameCreateCommand = require('../models/commands/game-create-command');
 const Game = require('../models/game');
 const Player = require('../models/player');
 const EventStoreWriteRepository = require('../repositories/base-event-store-write-repository');
 const GameEventStoreReadRepository = require('../repositories/game-event-store-read-repository');
 const PlayerEventStoreReadRepository = require('../repositories/player-event-store-read-repository');
 const logger = require('../utils/logger');
+const eventToGameEventMapper = require('../mappers/event-to-game-event-mapper');
 
 
 const gameCreateCommandHandler = async (command) => {
+    logger.info('gameCreateCommandHandler is handling command...');
     // repositories
     const esWriteRepository = new EventStoreWriteRepository();
     const gameESReadRepository = new GameEventStoreReadRepository();
     const playerESReadRepository = new PlayerEventStoreReadRepository();
-
+    // [TO-DO] utilize betAmount
     const { gameId, playerIds, betAmount } = command;
     // Validate game exists or not ...
-    const gameEvents = await gameESReadRepository.getAllById(gameId);
+    const gameEvents = await gameESReadRepository.getAllById(gameId)
+        .then((r) => r.map(eventToGameEventMapper));
     // If there is at least one event about game , terminate operation ...
     if (gameEvents.length !== 0) {
         throw new Error(`Game with Id ${gameId} is already exist!`);
@@ -44,15 +46,4 @@ const gameCreateCommandHandler = async (command) => {
 };
 
 
-const handle = (command) => {
-    switch (command.constructor) {
-        case GameCreateCommand:
-            return gameCreateCommandHandler(command);
-        default:
-            throw new Error('Unknown command !');
-    }
-};
-
-module.exports = {
-    handle,
-};
+module.exports = gameCreateCommandHandler;

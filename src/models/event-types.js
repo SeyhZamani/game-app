@@ -2,6 +2,7 @@ const mapper = {
     // game
     GAME_CREATED: 10001,
     GAME_FINISHED: 10002,
+    DICE_ROLLED: 10003,
     // player
     PLAYER_CREATED: 20001,
     PLAYER_DEACTIVATED: 20002,

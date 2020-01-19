@@ -1,7 +1,7 @@
 const gameRouter = require('express').Router();
 const uuidv1 = require('uuid/v1');
 const logger = require('../utils/logger');
-const gameCommandHandler = require('../handler/game-command-handler');
+const commandHandler = require('../handler');
 const GameCreateCommand = require('../models/commands/game-create-command');
 const DiceRollCommand = require('../models/commands/dice-roll-command');
 const { routerWrapper } = require('../utils/express-utils');
@@ -19,7 +19,7 @@ gameRouter.post('/', routerWrapper(async (req, res) => {
     // Create Game command...
     const command = new GameCreateCommand(gameId, playerIds, gameType, betAmount);
     logger.info(`GameCreateCommand is created : ${JSON.stringify(command)}`);
-    await gameCommandHandler.handle(command);
+    await commandHandler.handle(command);
     logger.info('Handler successfully handle command');
     return res.sendStatus(200);
 }));
@@ -31,8 +31,8 @@ gameRouter.put('/:id', routerWrapper(async (req, res) => {
     // Create Game command...
     const command = new DiceRollCommand(gameId, playerId, dices);
     logger.info(`DiceRollCommand is created : ${JSON.stringify(command)}`);
-    await gameCommandHandler.handle(command);
-    logger.info('Handler sccessfully handle command');
+    await commandHandler.handle(command);
+    logger.info('Handler successfully handle command');
     return res.sendStatus(200);
 }));
 
