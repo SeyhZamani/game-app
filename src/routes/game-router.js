@@ -1,7 +1,7 @@
 const gameRouter = require('express').Router();
 const uuidv1 = require('uuid/v1');
 const logger = require('../utils/logger');
-const commandHandler = require('../handler');
+const commandHandler = require('../handlers');
 const GameCreateCommand = require('../models/commands/game-create-command');
 const DiceRollCommand = require('../models/commands/dice-roll-command');
 const { routerWrapper } = require('../utils/express-utils');

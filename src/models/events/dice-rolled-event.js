@@ -4,20 +4,15 @@ const aggregateTypes = require('../aggregate-types');
 const eventTypes = require('../event-types');
 
 class DiceRolledMetadata {
-    /**
-     *
-     * @param {string} playerId
-     * @param {Array} dices
-     */
     constructor(playerId, dices) {
         if (!validator.isUUID(playerId)) {
-            throw new TypeError('DiceRolledMetadata requires valid playerId');
+            throw new TypeError('DiceRolledMetadata requires valid playerId!');
         }
-        if (!Array.isArray(dices) || dices.length === 0 || dices.some((d) => !Number.parseInt(d, 10))) {
-            throw new TypeError('DiceRolledMetadata requires valid dices');
+        if (!Array.isArray(dices) || dices.length === 0 || dices.some((d) => typeof d !== 'number')) {
+            throw new TypeError('DiceRolledMetadata requires valid dices!');
         }
         this.playerId = playerId;
-        this.dices = dices.map((d) => Number.parseInt(d, 10));
+        this.dices = dices;
     }
 }
 

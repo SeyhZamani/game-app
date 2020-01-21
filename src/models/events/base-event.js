@@ -14,7 +14,7 @@ class BaseEvent {
         if (!Object.values(eventTypes).includes(eventTypeId)) {
             throw new TypeError('BaseEvent requires valid eventTypeId!');
         }
-        if (!moment(timestamp).isValid()) {
+        if (!timestamp || !moment(timestamp).isValid()) {
             throw new TypeError('BaseEvent requires valid timestamp!');
         }
         if (!validator.isJSON(metadata)) {
@@ -23,7 +23,7 @@ class BaseEvent {
         this.aggregate_uuid = aggregateId;
         this.aggregate_type_id = aggregateTypeId;
         this.event_type_id = eventTypeId;
-        this.create_time = timestamp;
+        this.create_time = moment(timestamp).toDate();
         this.metadata = metadata;
     }
 
@@ -40,7 +40,7 @@ class BaseEvent {
     }
 
     getTimestamp() {
-        return this.timestamp;
+        return this.create_time;
     }
 
     getMetadata() {

@@ -10,7 +10,7 @@ class DiceRollCommand extends BaseCommand {
         if (!validator.isUUID(playerId)) {
             throw new TypeError('DiceRollCommand requires valid playerId!');
         }
-        if (!Array.isArray(dices) || dices.length === 0) {
+        if (!Array.isArray(dices) || dices.length === 0 || dices.some(isNaN)) {
             throw new TypeError('DiceRollCommand requires valid dices!');
         }
         this.gameId = gameId;

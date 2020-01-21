@@ -3,24 +3,20 @@ const BaseCommand = require('./base-command');
 const gameTypes = require('../game-types');
 
 class GameCreateCommand extends BaseCommand {
-    /**
-     *
-     * @param {string} gameId  UUID
-     * @param {Array} playerIds [...UUID]
-     * @param {string} gameType basic|
-     * @param {number} betAmount int
-     */
     constructor(gameId, playerIds, gameType, betAmount) {
         super();
         // Verify types
         if (!validator.isUUID(gameId)) {
-            throw TypeError('GameId must be UUID!');
+            throw TypeError('GameCreateCommand requires valid gameId!');
         }
         if (!Array.isArray(playerIds) || playerIds.length === 0 || playerIds.some((p) => !validator.isUUID(p))) {
-            throw TypeError('PlayerId must be Array and each one must be UUID!');
+            throw TypeError('GameCreateCommand requires valid playerIds!');
         }
         if (!(Object.values(gameTypes)).includes(gameType)) {
-            throw TypeError('Unknown game type!');
+            throw TypeError('GameCreateCommand requires valid gameType!');
+        }
+        if (isNaN(betAmount)) {
+            throw TypeError('GameCreateCommand requires valid betAmount!');
         }
 
         this.gameId = gameId;

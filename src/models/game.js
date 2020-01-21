@@ -1,23 +1,30 @@
 const moment = require('moment');
 const GameCreateCommand = require('./commands/game-create-command');
 const { GameCreatedEvent, GameCreatedMetadata } = require('./events/game-created-event');
+const { DiceRolledEvent, DiceRolledMetadata } = require('./events/dice-rolled-event');
 const { PlayerJoinedToGameEvent, PlayerJoinedToGameMetadata } = require('./events/player-joined-to-game-event');
 const aggregateTypes = require('./aggregate-types');
 
+
 class Game {
-    constructor(events = []) {
+    constructor() {
         this.gameId = undefined;
         this.gameType = undefined;
         this.betAmount = undefined;
-        this.playerIds = [];
-        this.apply(events);
+        this.playerIds = undefined;
     }
 
     apply(events) {
+        if (!Array.isArray(events) || events.length === 0) {
+            throw new Error('Events should be array and length greater 0');
+        }
         for (const event of events) {
             switch (event.constructor) {
                 case GameCreatedEvent:
                     this.applyGameCreatedEvent(event);
+                    break;
+                case DiceRolledEvent:
+                    this.applyDiceRolledEvent(event);
                     break;
                 default:
                     throw new Error('Unknown event !');
@@ -36,13 +43,14 @@ class Game {
 
     applyGameCreatedEvent(gameCreatedEvent) {
         const { playerIds, gameType, betAmount } = gameCreatedEvent.getMetadata();
-        // Assign event metadata to game aggregate instance
         this.gameId = gameCreatedEvent.getAggregateId();
         this.gameType = gameType;
         this.betAmount = betAmount;
-        for (const playerId of playerIds) {
-            this.playerIds.push(playerId);
-        }
+        this.playerId = playerIds;
+    }
+
+    applyDiceRolledEvent(diceRolledEvent) {
+        const { playerIds, gameType, betAmount } = diceRolledEvent.getMetadata();
     }
 
     processGameCreateCommand(command) {
@@ -64,6 +72,10 @@ class Game {
         // Only apply game types
         this.apply(events.filter((e) => e.aggregate_type_id === aggregateTypes.GAME));
         return events;
+    }
+
+    processDiceRolledCommand(command) {
+        const events = [];
     }
 
     /**

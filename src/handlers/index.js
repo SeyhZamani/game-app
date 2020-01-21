@@ -10,7 +10,7 @@ const handle = (command) => {
         case DiceRollCommand:
             return diceRollCommandHandler(command);
         default:
-            throw new Error('Unknown command !');
+            throw new Error('Unknown command!');
     }
 };
 
