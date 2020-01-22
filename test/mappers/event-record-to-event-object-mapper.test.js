@@ -1,19 +1,19 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const rewire = require('rewire');
-const mapper = rewire('../../src/mappers/event-to-game-event-mapper');
+const mapper = rewire('../../src/mappers/event-record-to-event-object-mapper');
 const aggregateType = require('../../src/models/aggregate-types');
 const eventTypes = require('../../src/models/event-types');
 
 
 
-describe('EventToGameEventMapper', function() {
+describe('EventRecordToEventObjectMapper', function() {
     it('Should throw exception if eventTypeId is invalid', function() {
         expect(function() {
             mapper.map({
                 event_type_id: -1
             })
-        }).to.throw('Unknown GameEvent Type!');
+        }).to.throw('Unknown Event Type!');
     });
     it('Should call mapToGameCreatedEvent once if event type is GAME_CREATED', function() {
         const mapToGameCreatedEventStub = sinon.stub(mapper, 'mapToGameCreatedEvent').returns(true);
@@ -52,5 +52,15 @@ describe('EventToGameEventMapper', function() {
         mapToGameCreatedEventStub.restore();
         unset1();
         unset2();
+    });
+    it('Should call mapToPlayerJoinedToGameEvent once if event type is PLAYER_JOINED_TO_GAME', function() {
+        const mapToPlayerJoinedEventStub = sinon.stub(mapper, 'mapToPlayerJoinedToGameEvent').returns(true);
+        const unset = mapper.__set__('mapToPlayerJoinedToGameEvent', mapToPlayerJoinedEventStub);
+        mapper.map({
+            event_type_id: eventTypes.PLAYER_JOINED_TO_GAME
+        })
+        sinon.assert.calledOnce(mapToPlayerJoinedEventStub);
+        mapToPlayerJoinedEventStub.restore();
+        unset();
     });
 });

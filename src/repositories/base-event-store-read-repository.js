@@ -1,4 +1,5 @@
 const { knex } = require('../utils/database');
+const { map: mapToEventObject } = require('../mappers/event-record-to-event-object-mapper');
 
 
 class BaseEventStoreReadRepository {
@@ -14,7 +15,8 @@ class BaseEventStoreReadRepository {
             .where({
                 aggregate_uuid: id,
                 aggregate_type_id: this.aggregateTypeId,
-            });
+            })
+            .then((r) => r.map(mapToEventObject));
     }
 }
 

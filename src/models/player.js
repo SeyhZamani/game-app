@@ -10,7 +10,7 @@ class Player {
 
     }
 
-    canPlay() {
+    hasEnoughCredit(betAmount) {
         return true;
     }
 }
