@@ -4,14 +4,43 @@ const { GameCreatedEvent, GameCreatedMetadata } = require('./events/game-created
 const { DiceRolledEvent, DiceRolledMetadata } = require('./events/dice-rolled-event');
 const { PlayerJoinedToGameEvent, PlayerJoinedToGameMetadata } = require('./events/player-joined-to-game-event');
 const aggregateTypes = require('./aggregate-types');
+const BasicGameStrategy = require('../strategies/basic-game-strategy');
 
 
 class Game {
     constructor() {
-        this.gameId = undefined;
-        this.gameType = undefined;
-        this.betAmount = undefined;
-        this.playerIds = undefined;
+        this.gameId = null;
+        this.gameType = null;
+        this.betAmount = null;
+        this.diceMapper = new Map();
+        this.strategy = null;
+        this.turn = 0;
+    }
+
+    getGameId() {
+        return this.gameId;
+    }
+
+    getTurn() {
+        return this.turn;
+    }
+
+    getDiceMapper() {
+        return this.diceMapper;
+    }
+
+    getStrategy() {
+        return this.strategy;
+    }
+
+    setStrategy(gameType) {
+        switch (gameType) {
+            case 'basic':
+                this.strategy = new BasicGameStrategy(this);
+                break;
+            default:
+                throw new Error('Unknown GameType!');
+        }
     }
 
     apply(events) {
@@ -27,7 +56,7 @@ class Game {
                     this.applyDiceRolledEvent(event);
                     break;
                 default:
-                    throw new Error('Unknown event !');
+                    throw new Error('Unknown Event!');
             }
         }
     }
@@ -37,7 +66,7 @@ class Game {
             case GameCreateCommand:
                 return this.processGameCreateCommand(command);
             default:
-                throw new Error('Unknown command !');
+                throw new Error('Unknown Command!');
         }
     }
 
@@ -46,11 +75,26 @@ class Game {
         this.gameId = gameCreatedEvent.getAggregateId();
         this.gameType = gameType;
         this.betAmount = betAmount;
-        this.playerId = playerIds;
+        playerIds.forEach((playerId, idx) => {
+            this.diceMapper.set(playerId, {
+                order: idx,
+                rolls: [],
+                playerId,
+                points: [],
+            });
+        });
+        this.setStrategy(this.gameType);
     }
 
     applyDiceRolledEvent(diceRolledEvent) {
-        const { playerIds, gameType, betAmount } = diceRolledEvent.getMetadata();
+        const { playerId, dices } = diceRolledEvent.getMetadata();
+        const { rolls } = this.diceMapper.get(playerId);
+        rolls.push([...dices]);
+        this.diceMapper.set(playerId, {
+            ...this.diceMapper.get(playerId),
+            rolls,
+        });
+        this.turn += 1;
     }
 
     processGameCreateCommand(command) {
@@ -75,7 +119,11 @@ class Game {
     }
 
     processDiceRolledCommand(command) {
-        const events = [];
+        const { playerId, dices } = command;
+        const events = this.strategy.handleDiceRoll(playerId, dices);
+        // Only apply game types
+        this.apply(events.filter((e) => e.aggregate_type_id === aggregateTypes.GAME));
+        return events;
     }
 
     /**
@@ -87,7 +135,7 @@ class Game {
      */
     shufflePlayersList(playerIds) {
         const cloneList = [...playerIds];
-        for (let i = cloneList.length - 1; i > 0; i--) {
+        for (let i = cloneList.length - 1; i > 0; i -= 1) {
             // Get random number between i and 0
             const j = Math.floor(Math.random() * (i + 1));
             // Swap elements
@@ -96,6 +144,5 @@ class Game {
         return cloneList;
     }
 }
-
 
 module.exports = Game;

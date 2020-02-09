@@ -8,6 +8,14 @@ const eventTypes = require('../../src/models/event-types');
 
 
 describe('EventRecordToEventObjectMapper', function() {
+    var sandbox;
+    beforeEach(function() {
+        sandbox = sinon.createSandbox();
+    });
+
+    afterEach(function() {
+        sandbox.restore();
+    });
     it('Should throw exception if eventTypeId is invalid', function() {
         expect(function() {
             mapper.map({
@@ -16,7 +24,7 @@ describe('EventRecordToEventObjectMapper', function() {
         }).to.throw('Unknown Event Type!');
     });
     it('Should call mapToGameCreatedEvent once if event type is GAME_CREATED', function() {
-        const mapToGameCreatedEventStub = sinon.stub(mapper, 'mapToGameCreatedEvent').returns(true);
+        const mapToGameCreatedEventStub = sandbox.stub(mapper, 'mapToGameCreatedEvent').returns(true);
         const unset = mapper.__set__('mapToGameCreatedEvent', mapToGameCreatedEventStub);
         mapper.map({
             event_type_id: eventTypes.GAME_CREATED
@@ -26,7 +34,7 @@ describe('EventRecordToEventObjectMapper', function() {
         unset();
     });
     it('Should call mapToDiceRolledEvent once if event type is DICE_ROLLED', function() {
-        const mapToDiceRolledEventStub = sinon.stub(mapper, 'mapToDiceRolledEvent').returns(true);
+        const mapToDiceRolledEventStub = sandbox.stub(mapper, 'mapToDiceRolledEvent').returns(true);
         const unset = mapper.__set__('mapToDiceRolledEvent', mapToDiceRolledEventStub);
         mapper.map({
             event_type_id: eventTypes.DICE_ROLLED
@@ -36,8 +44,8 @@ describe('EventRecordToEventObjectMapper', function() {
         unset();
     });
     it('Should call multiple times based on event types', function() {
-        const mapToDiceRolledEventStub = sinon.stub(mapper, 'mapToDiceRolledEvent').returns(true);
-        const mapToGameCreatedEventStub = sinon.stub(mapper, 'mapToGameCreatedEvent').returns(true);
+        const mapToDiceRolledEventStub = sandbox.stub(mapper, 'mapToDiceRolledEvent').returns(true);
+        const mapToGameCreatedEventStub = sandbox.stub(mapper, 'mapToGameCreatedEvent').returns(true);
         const unset1 = mapper.__set__('mapToDiceRolledEvent', mapToDiceRolledEventStub);
         const unset2 = mapper.__set__('mapToGameCreatedEvent', mapToGameCreatedEventStub);
         [
@@ -54,7 +62,7 @@ describe('EventRecordToEventObjectMapper', function() {
         unset2();
     });
     it('Should call mapToPlayerJoinedToGameEvent once if event type is PLAYER_JOINED_TO_GAME', function() {
-        const mapToPlayerJoinedEventStub = sinon.stub(mapper, 'mapToPlayerJoinedToGameEvent').returns(true);
+        const mapToPlayerJoinedEventStub = sandbox.stub(mapper, 'mapToPlayerJoinedToGameEvent').returns(true);
         const unset = mapper.__set__('mapToPlayerJoinedToGameEvent', mapToPlayerJoinedEventStub);
         mapper.map({
             event_type_id: eventTypes.PLAYER_JOINED_TO_GAME

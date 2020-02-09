@@ -1,19 +1,17 @@
-class Player {
+ class Player {
+     apply(events) {
+         if (!Array.isArray(events) || events.length === 0) {
+             throw new Error('Player Events should be array and be greater 0');
+         }
+     }
 
-    apply(events) {
-        if (!Array.isArray(events) || events.length === 0) {
-            throw new Error('Player Events should be array and be greater 0');
-        }
-    }
+     process(command) {
 
-    process(command) {
+     }
 
-    }
+     hasEnoughCredit(betAmount) {
+         return true;
+     }
+ }
 
-    hasEnoughCredit(betAmount) {
-        return true;
-    }
-}
-
-
-module.exports = Player;
+ module.exports = Player;

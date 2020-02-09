@@ -6,9 +6,11 @@ const DiceRollCommand = require('../../src/models/commands/dice-roll-command');
 describe('Handler', function() {
     let spyDiceRoll;
     let spyGameCreated;
+    let sandbox;
     beforeEach(function() {
-        spyDiceRoll = sinon.spy();
-        spyGameCreated = sinon.spy();
+        sandbox = sinon.createSandbox();
+        spyDiceRoll = sandbox.spy();
+        spyGameCreated = sandbox.spy();
         require.cache[require.resolve('../../src/handlers/dice-roll-command-handler')] = {
             exports: spyDiceRoll,
         };

@@ -9,6 +9,14 @@ chai.use(require('chai-as-promised'))
 const { expect } = chai;
 
 describe('GameCreateCommandHandler', function() {
+    var sandbox;
+    beforeEach(function() {
+        sandbox = sinon.createSandbox();
+    });
+
+    afterEach(function() {
+        sandbox.restore();
+    });
     it('Should throw exception there is already GameEvent', async function() {
         const gameId = "1234";
         const playerIds = ["1234", "5678"];
@@ -19,7 +27,7 @@ describe('GameCreateCommandHandler', function() {
             playerIds,
             betAmount
         };
-        const getAllByIdStub = sinon.stub(GameReadRepo.prototype, 'getAllById')
+        const getAllByIdStub = sandbox.stub(GameReadRepo.prototype, 'getAllById')
             .resolves(gameEvent);
         await expect(gameCommandHandler(command)).to.be.rejectedWith(`Game with Id ${gameId} already exists!`);
         getAllByIdStub.restore();
