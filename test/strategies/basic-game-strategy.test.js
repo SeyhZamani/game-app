@@ -2,7 +2,6 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const Game = require('../../src/models/game');
 const { TurnViolationError } = require('../../src/strategies/base-game-strategy');
-const BasicGameStrategy = require('../../src/strategies/basic-game-strategy');
 const { GameCreatedMetadata, GameCreatedEvent } = require('../../src/models/events/game-created-event');
 const { DiceRolledEvent, DiceRolledMetadata } = require('../../src/models/events/dice-rolled-event');
 
@@ -136,7 +135,7 @@ describe('BasicGameStrategy', function() {
             context.apply([gcEvent, dc1Event, dc2Event, dc3Event, dc4Event, dc5Event]);
             const strategy = context.getStrategy();
             const events = strategy.handleDiceRoll("e0ba4a44-3dc6-4564-8b44-6ab1403ac41b", [1, 1, 1]);
-            expect(events.length).to.be.eq(3);
+            expect(events.length).to.be.eq(4);
         });
     })
     describe('Two Players with same points wait last round', function() {
@@ -195,7 +194,7 @@ describe('BasicGameStrategy', function() {
             context.apply([gcEvent, dc1Event, dc2Event, dc3Event, dc4Event, dc5Event, dc6Event, dc7Event]);
             const strategy = context.getStrategy();
             const events = strategy.handleDiceRoll("e0ba4a44-3dc6-4564-8b44-6ab1403ac41b", [2, 1, 1]);
-            expect(events.length).to.be.eq(3);
+            expect(events.length).to.be.eq(4);
         })
     })
     describe('Three Players with elimination on third round', function() {
@@ -281,7 +280,7 @@ describe('BasicGameStrategy', function() {
                 context.apply([gcEvent, dc1Event, dc2Event, dc3Event, dc4Event, dc5Event, dc6Event, dc7Event, dc8Event, dc9Event, dc10Event]);
                 const strategy = context.getStrategy();
                 const events = strategy.handleDiceRoll("e0ba4a44-3dc6-4564-8b44-6ab1403ac41c", [3, 3, 3]);
-                expect(events.length).to.be.eq(3);
+                expect(events.length).to.be.eq(4);
             })
         });
         describe('Eliminate second player', function() {
@@ -366,7 +365,7 @@ describe('BasicGameStrategy', function() {
                 context.apply([gcEvent, dc1Event, dc2Event, dc3Event, dc4Event, dc5Event, dc6Event, dc7Event, dc8Event, dc9Event, dc10Event]);
                 const strategy = context.getStrategy();
                 const events = strategy.handleDiceRoll("e0ba4a44-3dc6-4564-8b44-6ab1403ac41c", [3, 3, 3]);
-                expect(events.length).to.be.eq(3);
+                expect(events.length).to.be.eq(4);
             })
         });
         describe('Eliminate second and third player', function() {
@@ -406,7 +405,7 @@ describe('BasicGameStrategy', function() {
                 context.apply([gcEvent, dc1Event, dc2Event, dc3Event, dc4Event, dc5Event, dc6Event, dc7Event, dc8Event]);
                 const strategy = context.getStrategy();
                 const events = strategy.handleDiceRoll("e0ba4a44-3dc6-4564-8b44-6ab1403ac41c", [2, 2, 2]);
-                expect(events.length).to.be.eq(3);
+                expect(events.length).to.be.eq(5);
             });
         });
     });

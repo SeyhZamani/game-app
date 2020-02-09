@@ -1,7 +1,9 @@
 const moment = require('moment');
 const GameCreateCommand = require('./commands/game-create-command');
+const DiceRollCommand = require('./commands/dice-roll-command');
 const { GameCreatedEvent, GameCreatedMetadata } = require('./events/game-created-event');
-const { DiceRolledEvent, DiceRolledMetadata } = require('./events/dice-rolled-event');
+const { DiceRolledEvent } = require('./events/dice-rolled-event');
+const { GameFinishedEvent } = require('./events/game-finished-event');
 const { PlayerJoinedToGameEvent, PlayerJoinedToGameMetadata } = require('./events/player-joined-to-game-event');
 const aggregateTypes = require('./aggregate-types');
 const BasicGameStrategy = require('../strategies/basic-game-strategy');
@@ -15,6 +17,7 @@ class Game {
         this.diceMapper = new Map();
         this.strategy = null;
         this.turn = 0;
+        this.isOver = false;
     }
 
     getGameId() {
@@ -55,6 +58,9 @@ class Game {
                 case DiceRolledEvent:
                     this.applyDiceRolledEvent(event);
                     break;
+                case GameFinishedEvent:
+                    this.applyGameFinishedEvent(event);
+                    break;
                 default:
                     throw new Error('Unknown Event!');
             }
@@ -65,6 +71,8 @@ class Game {
         switch (command.constructor) {
             case GameCreateCommand:
                 return this.processGameCreateCommand(command);
+            case DiceRollCommand:
+                return this.processDiceRolledCommand(command);
             default:
                 throw new Error('Unknown Command!');
         }
@@ -97,7 +105,14 @@ class Game {
         this.turn += 1;
     }
 
+    applyGameFinishedEvent() {
+        this.isOver = true;
+    }
+
     processGameCreateCommand(command) {
+        if (this.isOver) {
+            throw new Error('Game is already over!');
+        }
         const events = [];
         const {
             gameId,
@@ -119,6 +134,9 @@ class Game {
     }
 
     processDiceRolledCommand(command) {
+        if (this.isOver) {
+            throw new Error('Game is already over!');
+        }
         const { playerId, dices } = command;
         const events = this.strategy.handleDiceRoll(playerId, dices);
         // Only apply game types

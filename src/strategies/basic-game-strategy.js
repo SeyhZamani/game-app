@@ -1,6 +1,9 @@
 const moment = require('moment');
 const { BaseGameStrategy, TurnViolationError } = require('./base-game-strategy');
 const { DiceRolledEvent, DiceRolledMetadata } = require('../models/events/dice-rolled-event');
+const { GameFinishedEvent } = require('../models/events/game-finished-event');
+const { PlayerWonEvent, PlayerWonMetadata } = require('../models/events/player-won-event');
+const { PlayerLostEvent, PlayerLostMetadata } = require('../models/events/player-lost-event');
 
 const sum = (acc, curr) => acc + curr;
 
@@ -92,11 +95,19 @@ class BasicGameStrategy extends BaseGameStrategy {
             }
             const eliminated = this.getEliminatedPlayers(activePlayersInOrder);
             if (eliminated.length > 0) {
-                events.push('test');
+                eliminated.forEach((eId) => {
+                    const playerLostMetadata = new PlayerLostMetadata(gameId);
+                    const playerLostEvent = new PlayerLostEvent(eId, moment().utc(), playerLostMetadata);
+                    events.push(playerLostEvent);
+                });
             }
             activePlayersInOrder = activePlayersInOrder.filter((p) => !eliminated.includes(p));
             if (activePlayersInOrder.length === 1) {
-                events.push("test");
+                const [winnerPlayerId] = activePlayersInOrder;
+                const playerWonMetadata = new PlayerWonMetadata(gameId);
+                const playerWonEvent = new PlayerWonEvent(winnerPlayerId, moment().utc(), playerWonMetadata);
+                const gameFinishedEvent = new GameFinishedEvent(gameId, moment().utc());
+                events.push(...[playerWonEvent, gameFinishedEvent]);
             }
         }
         return events;
@@ -105,7 +116,6 @@ class BasicGameStrategy extends BaseGameStrategy {
     getEliminatedPlayers(activePlayersIds) {
         const diceMapper = this.context.getDiceMapper();
         if (activePlayersIds.some((p) => diceMapper.get(p).points.reduce(sum, 0) >= this.maxPoint)) {
-            //
             let maxPoint = 0;
             activePlayersIds.forEach((playerId) => {
                 const maxPointOfPlayer = diceMapper.get(playerId).points.reduce(sum, 0);
