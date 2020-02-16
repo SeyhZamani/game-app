@@ -17,7 +17,7 @@ class BaseEvent {
         if (!timestamp || !moment(timestamp).isValid()) {
             throw new TypeError('BaseEvent requires valid timestamp!');
         }
-        if (!validator.isJSON(metadata)) {
+        if (metadata && !validator.isJSON(metadata)) {
             throw new TypeError('BaseEvent requires valid JSON metadata!');
         }
         this.aggregate_uuid = aggregateId;

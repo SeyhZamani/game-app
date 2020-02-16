@@ -36,6 +36,10 @@ class Game {
         return this.strategy;
     }
 
+    getBetAmount() {
+        return this.betAmount;
+    }
+
     setStrategy(gameType) {
         switch (gameType) {
             case 'basic':
@@ -123,10 +127,12 @@ class Game {
         // Shuffle players
         const shuffledPlayerIds = this.shufflePlayersList(playerIds);
         const gameCreatedMetadata = new GameCreatedMetadata(gameType, shuffledPlayerIds, betAmount);
-        events.push(new GameCreatedEvent(gameId, moment().utc(), gameCreatedMetadata));
+        const gameCreatedEvent = new GameCreatedEvent(gameId, moment().utc(), gameCreatedMetadata);
+        events.push(gameCreatedEvent);
         for (const playerId of shuffledPlayerIds) {
             const playerJoinedToGameMetadata = new PlayerJoinedToGameMetadata(gameId, betAmount);
-            events.push(new PlayerJoinedToGameEvent(playerId, moment().utc(), playerJoinedToGameMetadata));
+            const playerJoinedToGameEvent = new PlayerJoinedToGameEvent(playerId, moment().utc(), playerJoinedToGameMetadata);
+            events.push(playerJoinedToGameEvent);
         }
         // Only apply game types
         this.apply(events.filter((e) => e.aggregate_type_id === aggregateTypes.GAME));

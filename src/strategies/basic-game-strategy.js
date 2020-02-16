@@ -7,6 +7,10 @@ const { PlayerLostEvent, PlayerLostMetadata } = require('../models/events/player
 
 const sum = (acc, curr) => acc + curr;
 
+/**
+ *
+ */
+
 class BasicGameStrategy extends BaseGameStrategy {
     constructor(context) {
         super(context);
@@ -103,8 +107,10 @@ class BasicGameStrategy extends BaseGameStrategy {
             }
             activePlayersInOrder = activePlayersInOrder.filter((p) => !eliminated.includes(p));
             if (activePlayersInOrder.length === 1) {
+                const allPlayerIds = Array.from(diceMapper.keys());
+                const totalWinAmount = this.context.getBetAmount() * allPlayerIds.length;
                 const [winnerPlayerId] = activePlayersInOrder;
-                const playerWonMetadata = new PlayerWonMetadata(gameId);
+                const playerWonMetadata = new PlayerWonMetadata(gameId, totalWinAmount);
                 const playerWonEvent = new PlayerWonEvent(winnerPlayerId, moment().utc(), playerWonMetadata);
                 const gameFinishedEvent = new GameFinishedEvent(gameId, moment().utc());
                 events.push(...[playerWonEvent, gameFinishedEvent]);

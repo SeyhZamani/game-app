@@ -4,10 +4,15 @@ const aggregateTypes = require('../aggregate-types');
 const eventTypes = require('../event-types');
 
 class PlayerWonMetadata {
-    constructor(gameId) {
+    constructor(gameId, credit) {
         if (!validator.isUUID(gameId)) {
-            throw new TypeError('PlayerJoinedToGameMetadata requires valid gameId!');
+            throw new TypeError('PlayerWonMetadata requires valid gameId!');
         }
+        if (typeof credit !== 'number') {
+            throw new TypeError('PlayerWonMetadata requires valid credit!');
+        }
+        this.gameId = gameId;
+        this.credit = Math.abs(credit);
     }
 }
 
@@ -27,8 +32,8 @@ class PlayerWonEvent extends BaseEvent {
 
     getMetadata() {
         const metadataObj = JSON.parse(this.metadata);
-        const { gameId } = metadataObj;
-        return new PlayerWonMetadata(gameId);
+        const { gameId, credit } = metadataObj;
+        return new PlayerWonMetadata(gameId, credit);
     }
 }
 

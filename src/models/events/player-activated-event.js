@@ -3,12 +3,12 @@ const aggregateTypes = require('../aggregate-types');
 const eventTypes = require('../event-types');
 
 
-class GameFinishedEvent extends BaseEvent {
-    constructor(gameId, timestamp) {
+class PlayerActivatedEvent extends BaseEvent {
+    constructor(playerId, timestamp) {
         super(
-            gameId,
-            aggregateTypes.GAME,
-            eventTypes.GAME_FINISHED,
+            playerId,
+            aggregateTypes.PLAYER,
+            eventTypes.PLAYER_ACTIVATED,
             timestamp,
             null,
         );
@@ -20,5 +20,5 @@ class GameFinishedEvent extends BaseEvent {
 }
 
 module.exports = {
-    GameFinishedEvent,
+    PlayerActivatedEvent,
 };

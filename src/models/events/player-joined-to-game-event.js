@@ -5,15 +5,15 @@ const eventTypes = require('../event-types');
 
 
 class PlayerJoinedToGameMetadata {
-    constructor(gameId, betAmount) {
+    constructor(gameId, credit) {
         if (!validator.isUUID(gameId)) {
             throw new TypeError('PlayerJoinedToGameMetadata requires valid gameId!');
         }
-        if (typeof betAmount !== 'number') {
-            throw new TypeError('PlayerJoinedToGameMetadata requires valid betAmount!');
+        if (typeof credit !== 'number') {
+            throw new TypeError('PlayerJoinedToGameMetadata requires valid credit!');
         }
         this.gameId = gameId;
-        this.betAmount = betAmount;
+        this.credit = Math.abs(credit) * -1;
     }
 }
 
@@ -33,8 +33,8 @@ class PlayerJoinedToGameEvent extends BaseEvent {
 
     getMetadata() {
         const metadataObj = JSON.parse(this.metadata);
-        const { gameId, betAmount } = metadataObj;
-        return new PlayerJoinedToGameMetadata(gameId, betAmount);
+        const { gameId, credit } = metadataObj;
+        return new PlayerJoinedToGameMetadata(gameId, credit);
     }
 }
 

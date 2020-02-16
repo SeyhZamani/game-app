@@ -46,10 +46,10 @@ INSERT INTO public.event_type (id,
 INSERT INTO public.event_type (id,
   event_type_desc)
   VALUES (20007,
-    'Player Deposit Money');
+    'Player Deposit Credit');
 
 INSERT INTO public.event_type (id,
   event_type_desc)
   VALUES (20008,
-    'Player Withdraw Money');
+    'Player Withdraw Credit');
 
