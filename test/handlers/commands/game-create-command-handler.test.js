@@ -1,9 +1,9 @@
 const chai = require('chai');
 const sinon = require('sinon');
-const gameCommandHandler = require('../../src/handlers/game-create-command-handler');
-const WriteRepo = require('../../src/repositories/base-event-store-write-repository');
-const GameReadRepo = require('../../src/repositories/game-event-store-read-repository')
-const Game = require('../../src/models/game');
+const gameCommandHandler = require('../../../src/handlers/commands/game-create-command-handler');
+const WriteRepo = require('../../../src/repositories/base-event-store-write-repository');
+const GameReadRepo = require('../../../src/repositories/game-event-store-read-repository')
+const Game = require('../../../src/models/game');
 
 chai.use(require('chai-as-promised'))
 const { expect } = chai;

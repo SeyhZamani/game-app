@@ -1,7 +1,7 @@
-const Game = require('../models/game');
-const logger = require('../utils/logger');
-const EventStoreWriteRepository = require('../repositories/base-event-store-write-repository');
-const GameEventStoreReadRepository = require('../repositories/game-event-store-read-repository');
+const Game = require('../../models/game');
+const logger = require('../../utils/logger');
+const EventStoreWriteRepository = require('../../repositories/base-event-store-write-repository');
+const GameEventStoreReadRepository = require('../../repositories/game-event-store-read-repository');
 
 
 const diceRollCommandHandler = async (command) => {

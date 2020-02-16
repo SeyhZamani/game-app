@@ -1,9 +1,9 @@
-const Game = require('../models/game');
-const Player = require('../models/player');
-const EventStoreWriteRepository = require('../repositories/base-event-store-write-repository');
-const GameEventStoreReadRepository = require('../repositories/game-event-store-read-repository');
-const PlayerEventStoreReadRepository = require('../repositories/player-event-store-read-repository');
-const logger = require('../utils/logger');
+const Game = require('../../models/game');
+const Player = require('../../models/player');
+const EventStoreWriteRepository = require('../../repositories/base-event-store-write-repository');
+const GameEventStoreReadRepository = require('../../repositories/game-event-store-read-repository');
+const PlayerEventStoreReadRepository = require('../../repositories/player-event-store-read-repository');
+const logger = require('../../utils/logger');
 
 
 const gameCreateCommandHandler = async (command) => {

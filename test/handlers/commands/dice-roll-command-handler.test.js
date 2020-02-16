@@ -1,9 +1,9 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const diceRollHandler = require('../../src/handlers/dice-roll-command-handler');
-const WriteRepo = require('../../src/repositories/base-event-store-write-repository');
-const GameReadRepo = require('../../src/repositories/game-event-store-read-repository')
-const Game = require('../../src/models/game');
+const diceRollHandler = require('../../../src/handlers/commands/dice-roll-command-handler');
+const WriteRepo = require('../../../src/repositories/base-event-store-write-repository');
+const GameReadRepo = require('../../../src/repositories/game-event-store-read-repository')
+const Game = require('../../../src/models/game');
 
 describe('DiceRollCommandHandler', function() {
 

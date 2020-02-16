@@ -1,5 +1,5 @@
-const GameCreateCommand = require('../models/commands/game-create-command');
-const DiceRollCommand = require('../models/commands/dice-roll-command');
+const GameCreateCommand = require('../../models/commands/game-create-command');
+const DiceRollCommand = require('../../models/commands/dice-roll-command');
 const gameCreateCommandHandler = require('./game-create-command-handler');
 const diceRollCommandHandler = require('./dice-roll-command-handler');
 

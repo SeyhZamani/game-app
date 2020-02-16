@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const GameCreateCommand = require('../../src/models/commands/game-create-command');
-const DiceRollCommand = require('../../src/models/commands/dice-roll-command');
+const GameCreateCommand = require('../../../src/models/commands/game-create-command');
+const DiceRollCommand = require('../../../src/models/commands/dice-roll-command');
 
 describe('Handler', function() {
     let spyDiceRoll;
@@ -11,27 +11,27 @@ describe('Handler', function() {
         sandbox = sinon.createSandbox();
         spyDiceRoll = sandbox.spy();
         spyGameCreated = sandbox.spy();
-        require.cache[require.resolve('../../src/handlers/dice-roll-command-handler')] = {
+        require.cache[require.resolve('../../../src/handlers/commands/dice-roll-command-handler')] = {
             exports: spyDiceRoll,
         };
-        require.cache[require.resolve('../../src/handlers/game-create-command-handler')] = {
+        require.cache[require.resolve('../../../src/handlers/commands/game-create-command-handler')] = {
             exports: spyGameCreated,
         };
     })
     afterEach(function() {
-        delete require.cache[require.resolve('../../src/handlers')];
-        delete require.cache[require.resolve('../../src/handlers/dice-roll-command-handler')];
-        delete require.cache[require.resolve('../../src/handlers/game-create-command-handler')];
+        delete require.cache[require.resolve('../../../src/handlers/commands')];
+        delete require.cache[require.resolve('../../../src/handlers/commands/dice-roll-command-handler')];
+        delete require.cache[require.resolve('../../../src/handlers/commands/game-create-command-handler')];
 
     })
     it('Should throw exception if command is unknown', function() {
-        const { handle } = require('../../src/handlers');
+        const { handle } = require('../../../src/handlers/commands');
         expect(function() {
             handle({})
         }).to.throw('Unknown command!');
     })
     it('Should call once if GameCreateCommand', function() {
-        const { handle } = require('../../src/handlers');
+        const { handle } = require('../../../src/handlers/commands');
         const command = new GameCreateCommand("e0ba4a44-3dc6-4564-8b44-6ab1403ac41a",
             ["e0ba4a44-3dc6-4564-8b44-6ab1403ac41b",
                 "e0ba4a44-3dc6-4564-8b44-6ab1403ac41c",
@@ -42,7 +42,7 @@ describe('Handler', function() {
         sinon.assert.notCalled(spyDiceRoll);
     })
     it('Should call once if DiceRollCommand', function() {
-        const { handle } = require('../../src/handlers');
+        const { handle } = require('../../../src/handlers/commands');
         const command = new DiceRollCommand(
             "e0ba4a44-3dc6-4564-8b44-6ab1403ac41a",
             "e0ba4a44-3dc6-4564-8b44-6ab1403ac41b",

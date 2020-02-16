@@ -1,15 +1,20 @@
 const gameRouter = require('express').Router();
 const uuidv1 = require('uuid/v1');
 const logger = require('../utils/logger');
-const commandHandler = require('../handlers');
+const commandHandler = require('../handlers/commands');
+const queryHandler = require('../handlers/queries');
 const GameCreateCommand = require('../models/commands/game-create-command');
 const DiceRollCommand = require('../models/commands/dice-roll-command');
+const GameGetByIdQuery = require('../models/queries/game-get-by-id-query');
 const { routerWrapper } = require('../utils/express-utils');
 
-
-gameRouter.get('/:id', routerWrapper((req, res) => {
+gameRouter.get('/:id', routerWrapper(async (req, res) => {
     logger.info('Game fetching is called ...');
-    return res.sendStatus(200);
+    const { id: gameId } = req.params;
+    const query = new GameGetByIdQuery(gameId);
+    logger.info(`GameGetByIdQuery is created : ${JSON.stringify(query)}`);
+    const game = queryHandler.handle(query);
+    return res.JSON(game);
 }));
 
 gameRouter.post('/', routerWrapper(async (req, res) => {
