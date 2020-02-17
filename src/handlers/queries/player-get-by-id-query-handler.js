@@ -9,9 +9,9 @@ const playerGetByIdQueryHandler = async (query) => {
     const { playerId } = query;
     const playerESReadRepository = new PlayerEventStoreReadRepository();
     const playerEvents = await playerESReadRepository.getAllById(playerId);
-    const game = new Player();
-    game.apply(playerEvents);
-    return game;
+    const player = new Player();
+    player.apply(playerEvents);
+    return player;
 };
 
 module.exports = playerGetByIdQueryHandler;
