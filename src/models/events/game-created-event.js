@@ -4,16 +4,16 @@ const aggregateTypes = require('../aggregate-types');
 const eventTypes = require('../event-types');
 const gameTypes = require('../game-types');
 
-class GameCreatedMetadata {
+class GameCreatedData {
     constructor(gameType, playerIds, betAmount) {
         if (!Object.values(gameTypes).includes(gameType)) {
-            throw new TypeError('GameCreatedMetadata requires valid gameType!');
+            throw new TypeError('GameCreatedData requires valid gameType!');
         }
         if (!Array.isArray(playerIds) || playerIds.length === 0 || playerIds.some((p) => !validator.isUUID(p))) {
-            throw new TypeError('GameCreatedMetadata requires valid playerIds!');
+            throw new TypeError('GameCreatedData requires valid playerIds!');
         }
         if (typeof betAmount !== 'number') {
-            throw new TypeError('GameCreatedMetadata requires valid betAmount!');
+            throw new TypeError('GameCreatedData requires valid betAmount!');
         }
         this.gameType = gameType;
         this.playerIds = playerIds;
@@ -22,28 +22,28 @@ class GameCreatedMetadata {
 }
 
 class GameCreatedEvent extends BaseEvent {
-    constructor(gameId, timestamp, gameCreatedMetadata) {
-        if (!(gameCreatedMetadata instanceof GameCreatedMetadata)) {
-            throw new Error('GameCreatedEvent requires valid gameCreatedMetadata!');
+    constructor(gameId, timestamp, gameCreatedData) {
+        if (!(gameCreatedData instanceof GameCreatedData)) {
+            throw new Error('GameCreatedEvent requires valid gameCreatedData!');
         }
         super(
             gameId,
             aggregateTypes.GAME,
             eventTypes.GAME_CREATED,
             timestamp,
-            JSON.stringify(gameCreatedMetadata),
+            JSON.stringify(gameCreatedData),
         );
     }
 
-    getMetadata() {
-        const metadataObj = JSON.parse(this.metadata);
-        const { gameType, playerIds, betAmount } = metadataObj;
-        return new GameCreatedMetadata(gameType, playerIds, betAmount);
+    getData() {
+        const dataObj = JSON.parse(this.event_data);
+        const { gameType, playerIds, betAmount } = dataObj;
+        return new GameCreatedData(gameType, playerIds, betAmount);
     }
 }
 
 
 module.exports = {
     GameCreatedEvent,
-    GameCreatedMetadata,
+    GameCreatedData,
 };

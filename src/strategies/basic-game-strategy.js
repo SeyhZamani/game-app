@@ -1,9 +1,9 @@
 const moment = require('moment');
 const { BaseGameStrategy, TurnViolationError } = require('./base-game-strategy');
-const { DiceRolledEvent, DiceRolledMetadata } = require('../models/events/dice-rolled-event');
+const { DiceRolledEvent, DiceRolledData } = require('../models/events/dice-rolled-event');
 const { GameFinishedEvent } = require('../models/events/game-finished-event');
-const { PlayerWonEvent, PlayerWonMetadata } = require('../models/events/player-won-event');
-const { PlayerLostEvent, PlayerLostMetadata } = require('../models/events/player-lost-event');
+const { PlayerWonEvent, PlayerWonData } = require('../models/events/player-won-event');
+const { PlayerLostEvent, PlayerLostData } = require('../models/events/player-lost-event');
 
 const sum = (acc, curr) => acc + curr;
 
@@ -67,8 +67,8 @@ class BasicGameStrategy extends BaseGameStrategy {
         if (activePlayersInOrder[currentTurn % activePlayersInOrder.length] !== playerId) {
             throw new TurnViolationError(playerId);
         }
-        const diceRolledMetadata = new DiceRolledMetadata(playerId, dices);
-        const diceRolledEvent = new DiceRolledEvent(gameId, moment().utc(), diceRolledMetadata);
+        const diceRolledData = new DiceRolledData(playerId, dices);
+        const diceRolledEvent = new DiceRolledEvent(gameId, moment().utc(), diceRolledData);
         events.push(diceRolledEvent);
         // create event 1....
         const { rolls } = diceMapper.get(playerId);
@@ -100,8 +100,8 @@ class BasicGameStrategy extends BaseGameStrategy {
             const eliminated = this.getEliminatedPlayers(activePlayersInOrder);
             if (eliminated.length > 0) {
                 eliminated.forEach((eId) => {
-                    const playerLostMetadata = new PlayerLostMetadata(gameId);
-                    const playerLostEvent = new PlayerLostEvent(eId, moment().utc(), playerLostMetadata);
+                    const playerLostData = new PlayerLostData(gameId);
+                    const playerLostEvent = new PlayerLostEvent(eId, moment().utc(), playerLostData);
                     events.push(playerLostEvent);
                 });
             }
@@ -110,8 +110,8 @@ class BasicGameStrategy extends BaseGameStrategy {
                 const allPlayerIds = Array.from(diceMapper.keys());
                 const totalWinAmount = this.context.getBetAmount() * allPlayerIds.length;
                 const [winnerPlayerId] = activePlayersInOrder;
-                const playerWonMetadata = new PlayerWonMetadata(gameId, totalWinAmount);
-                const playerWonEvent = new PlayerWonEvent(winnerPlayerId, moment().utc(), playerWonMetadata);
+                const playerWonData = new PlayerWonData(gameId, totalWinAmount);
+                const playerWonEvent = new PlayerWonEvent(winnerPlayerId, moment().utc(), playerWonData);
                 const gameFinishedEvent = new GameFinishedEvent(gameId, moment().utc());
                 events.push(...[playerWonEvent, gameFinishedEvent]);
             }

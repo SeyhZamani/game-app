@@ -38,7 +38,7 @@ describe('BaseEvent', function() {
             new BaseEvent("e0ba4a44-3dc6-4564-8b44-6ab1403ac41a", 1001, 10001);
         }).to.throw('BaseEvent requires valid timestamp!');
     });
-    it('Should throw exception if metadata is invalid', function() {
+    it('Should throw exception if data is invalid', function() {
         expect(function() {
             const jsonStr = JSON.stringify({ a: "test" });
             new BaseEvent("e0ba4a44-3dc6-4564-8b44-6ab1403ac41a", 1001, 10001, '2019-01-01', { a: "test" });

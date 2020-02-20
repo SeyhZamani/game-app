@@ -3,36 +3,37 @@ const BaseEvent = require('./base-event');
 const aggregateTypes = require('../aggregate-types');
 const eventTypes = require('../event-types');
 
-class PlayerLostMetadata {
+class PlayerLostData {
     constructor(gameId) {
         if (!validator.isUUID(gameId)) {
-            throw new TypeError('PlayerJoinedToGameMetadata requires valid gameId!');
+            throw new TypeError('PlayerLostData requires valid gameId!');
         }
+        this.gameId = gameId;
     }
 }
 
 class PlayerLostEvent extends BaseEvent {
-    constructor(playerId, timestamp, playerLostMetadata) {
-        if (!(playerLostMetadata instanceof PlayerLostMetadata)) {
-            throw new Error('PlayerLostEvent requires valid playerLostMetadata!');
+    constructor(playerId, timestamp, playerLostData) {
+        if (!(playerLostData instanceof PlayerLostData)) {
+            throw new Error('PlayerLostEvent requires valid playerLostData!');
         }
         super(
             playerId,
             aggregateTypes.PLAYER,
             eventTypes.PLAYER_LOST,
             timestamp,
-            JSON.stringify(playerLostMetadata),
+            JSON.stringify(playerLostData),
         );
     }
 
-    getMetadata() {
-        const metadataObj = JSON.parse(this.metadata);
-        const { gameId } = metadataObj;
-        return new PlayerLostMetadata(gameId);
+    getData() {
+        const dataObj = JSON.parse(this.event_data);
+        const { gameId } = dataObj;
+        return new PlayerLostData(gameId);
     }
 }
 
 module.exports = {
-    PlayerLostMetadata,
+    PlayerLostData,
     PlayerLostEvent,
 };

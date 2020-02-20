@@ -58,7 +58,7 @@
          this.active = true;
      }
      applyPlayerCreatedEvent(playerCreatedEvent) {
-         const { credit } = playerCreatedEvent.getMetadata();
+         const { credit } = playerCreatedEvent.getData();
          this.active = true;
          this.credit += credit;
      }
@@ -66,22 +66,22 @@
          this.active = false;
      }
      applyPlayerDepositCreditEvent(playerDepositCreditEvent) {
-         const { credit } = playerDepositCreditEvent.getMetadata();
+         const { credit } = playerDepositCreditEvent.getData();
          this.credit += credit;
      }
      applyPlayerJoinedToGameEvent(playerJoinedToGameEvent) {
-         const { credit } = playerJoinedToGameEvent.getMetadata();
+         const { credit } = playerJoinedToGameEvent.getData();
          this.credit += credit;
      }
      applyPlayerLostEvent() {
 
      }
      applyPlayerWithdrawCreditEvent(playerWithdrawCreditEvent) {
-         const { credit } = playerWithdrawCreditEvent.getMetadata();
+         const { credit } = playerWithdrawCreditEvent.getData();
          this.credit += credit;
      }
      applyPlayerWonEvent(playerWonEvent) {
-         const { credit } = playerWonEvent.getMetadata();
+         const { credit } = playerWonEvent.getData();
          this.credit += credit;
      }
  }

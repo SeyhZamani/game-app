@@ -1,10 +1,10 @@
 const moment = require('moment');
 const GameCreateCommand = require('./commands/game-create-command');
 const DiceRollCommand = require('./commands/dice-roll-command');
-const { GameCreatedEvent, GameCreatedMetadata } = require('./events/game-created-event');
+const { GameCreatedEvent, GameCreatedData } = require('./events/game-created-event');
 const { DiceRolledEvent } = require('./events/dice-rolled-event');
 const { GameFinishedEvent } = require('./events/game-finished-event');
-const { PlayerJoinedToGameEvent, PlayerJoinedToGameMetadata } = require('./events/player-joined-to-game-event');
+const { PlayerJoinedToGameEvent, PlayerJoinedToGameData } = require('./events/player-joined-to-game-event');
 const aggregateTypes = require('./aggregate-types');
 const BasicGameStrategy = require('../strategies/basic-game-strategy');
 
@@ -83,7 +83,7 @@ class Game {
     }
 
     applyGameCreatedEvent(gameCreatedEvent) {
-        const { playerIds, gameType, betAmount } = gameCreatedEvent.getMetadata();
+        const { playerIds, gameType, betAmount } = gameCreatedEvent.getData();
         this.gameId = gameCreatedEvent.getAggregateId();
         this.gameType = gameType;
         this.betAmount = betAmount;
@@ -99,7 +99,7 @@ class Game {
     }
 
     applyDiceRolledEvent(diceRolledEvent) {
-        const { playerId, dices } = diceRolledEvent.getMetadata();
+        const { playerId, dices } = diceRolledEvent.getData();
         const { rolls } = this.diceMapper.get(playerId);
         rolls.push([...dices]);
         this.diceMapper.set(playerId, {
@@ -126,12 +126,12 @@ class Game {
         } = command;
         // Shuffle players
         const shuffledPlayerIds = this.shufflePlayersList(playerIds);
-        const gameCreatedMetadata = new GameCreatedMetadata(gameType, shuffledPlayerIds, betAmount);
-        const gameCreatedEvent = new GameCreatedEvent(gameId, moment().utc(), gameCreatedMetadata);
+        const gameCreatedData = new GameCreatedData(gameType, shuffledPlayerIds, betAmount);
+        const gameCreatedEvent = new GameCreatedEvent(gameId, moment().utc(), gameCreatedData);
         events.push(gameCreatedEvent);
         for (const playerId of shuffledPlayerIds) {
-            const playerJoinedToGameMetadata = new PlayerJoinedToGameMetadata(gameId, betAmount);
-            const playerJoinedToGameEvent = new PlayerJoinedToGameEvent(playerId, moment().utc(), playerJoinedToGameMetadata);
+            const playerJoinedToGameData = new PlayerJoinedToGameData(gameId, betAmount);
+            const playerJoinedToGameEvent = new PlayerJoinedToGameEvent(playerId, moment().utc(), playerJoinedToGameData);
             events.push(playerJoinedToGameEvent);
         }
         // Only apply game types

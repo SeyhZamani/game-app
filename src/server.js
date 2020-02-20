@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./utils/logger');
 const baseRouter = require('./routes');
-
+const errorHandlerMiddlware = require('./middlewares/error-handler-middleware');
 
 const createServer = () => {
     const app = express();
@@ -12,11 +12,7 @@ const createServer = () => {
         extended: true,
     }));
     app.use(bodyParser.json());
-    // [TO-DO] Apply middleware
-    app.use((err, req, res, next) => {
-        logger.error(err.stack);
-        return res.status(500).send(err.message);
-    });
+    app.use(errorHandlerMiddlware);
     app.use('/api', baseRouter);
 
     app.listen(PORT, () => {

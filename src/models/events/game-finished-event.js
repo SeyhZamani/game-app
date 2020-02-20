@@ -14,7 +14,7 @@ class GameFinishedEvent extends BaseEvent {
         );
     }
 
-    getMetadata() {
+    getData() {
         return null;
     }
 }

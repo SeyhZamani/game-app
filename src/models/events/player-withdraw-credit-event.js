@@ -2,10 +2,10 @@ const BaseEvent = require('./base-event');
 const aggregateTypes = require('../aggregate-types');
 const eventTypes = require('../event-types');
 
-class PlayerWithdrawCreditMetadata {
+class PlayerWithdrawCreditData {
     constructor(credit) {
         if (typeof credit !== 'number') {
-            throw new TypeError('PlayerJoinedToGameMetadata requires valid credit!');
+            throw new TypeError('PlayerWithdrawCreditData requires valid credit!');
         }
         this.credit = Math.abs(credit) * -1;
     }
@@ -13,27 +13,27 @@ class PlayerWithdrawCreditMetadata {
 
 
 class PlayerWithdrawCreditEvent extends BaseEvent {
-    constructor(playerId, timestamp, playerWithdrawCreditMetadata) {
-        if (!(playerWithdrawCreditMetadata instanceof PlayerWithdrawCreditMetadata)) {
-            throw new Error('PlayerWithdrawCreditEvent requires valid playerWithdrawCreditMetadata!');
+    constructor(playerId, timestamp, playerWithdrawCreditData) {
+        if (!(playerWithdrawCreditData instanceof PlayerWithdrawCreditData)) {
+            throw new Error('PlayerWithdrawCreditEvent requires valid playerWithdrawCreditData!');
         }
         super(
             playerId,
             aggregateTypes.PLAYER,
             eventTypes.PLAYER_WITHDRAW_CREDIT,
             timestamp,
-            JSON.stringify(playerWithdrawCreditMetadata),
+            JSON.stringify(playerWithdrawCreditData),
         );
     }
 
-    getMetadata() {
-        const metadataObj = JSON.parse(this.metadata);
-        const { credit } = metadataObj;
-        return new PlayerWithdrawCreditMetadata(credit);
+    getData() {
+        const dataObj = JSON.parse(this.event_data);
+        const { credit } = dataObj;
+        return new PlayerWithdrawCreditData(credit);
     }
 }
 
 module.exports = {
     PlayerWithdrawCreditEvent,
-    PlayerWithdrawCreditMetadata,
+    PlayerWithdrawCreditData,
 };

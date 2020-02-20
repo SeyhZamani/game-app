@@ -1,34 +1,34 @@
 const eventTypes = require('../models/event-types');
-const { GameCreatedEvent, GameCreatedMetadata } = require('../models/events/game-created-event');
-const { DiceRolledEvent, DiceRolledMetadata } = require('../models/events/dice-rolled-event');
-const { PlayerJoinedToGameMetadata, PlayerJoinedToGameEvent } = require('../models/events/player-joined-to-game-event');
+const { GameCreatedEvent, GameCreatedData } = require('../models/events/game-created-event');
+const { DiceRolledEvent, DiceRolledData } = require('../models/events/dice-rolled-event');
+const { PlayerJoinedToGameEvent, PlayerJoinedToGameData } = require('../models/events/player-joined-to-game-event');
 const { GameFinishedEvent } = require('../models/events/game-finished-event');
 const { PlayerActivatedEvent } = require('../models/events/player-activated-event');
-const { PlayerCreatedEvent, PlayerCreatedMetadata } = require('../models/events/player-created-event');
+const { PlayerCreatedEvent, PlayerCreatedData } = require('../models/events/player-created-event');
 const { PlayerDeactivatedEvent } = require('../models/events/player-deactivated-event');
-const { PlayerDepositCreditEvent, PlayerDepositCreditMetadata } = require('../models/events/player-deposit-credit-event');
-const { PlayerLostEvent, PlayerLostMetadata } = require('../models/events/player-lost-event');
-const { PlayerWithdrawCreditEvent, PlayerWithdrawCreditMetadata } = require('../models/events/player-withdraw-credit-event');
-const { PlayerWonEvent, PlayerWonMetadata } = require('../models/events/player-won-event');
+const { PlayerDepositCreditEvent, PlayerDepositCreditData } = require('../models/events/player-deposit-credit-event');
+const { PlayerLostEvent, PlayerLostData } = require('../models/events/player-lost-event');
+const { PlayerWithdrawCreditEvent, PlayerWithdrawCreditData } = require('../models/events/player-withdraw-credit-event');
+const { PlayerWonEvent, PlayerWonData } = require('../models/events/player-won-event');
 
 // Dice-Roll
 const mapToDiceRolledEvent = (event) => {
-    const { aggregate_uuid: gameId, create_time: timestamp, metadata } = event;
-    const { playerId, dices } = metadata;
+    const { aggregate_uuid: gameId, create_time: timestamp, event_data: data } = event;
+    const { playerId, dices } = data;
     return new DiceRolledEvent(
         gameId,
         timestamp,
-        new DiceRolledMetadata(playerId, dices),
+        new DiceRolledData(playerId, dices),
     );
 };
 // Game-Created
 const mapToGameCreatedEvent = (event) => {
-    const { aggregate_uuid: gameId, create_time: timestamp, metadata } = event;
-    const { gameType, playerIds, betAmount } = metadata;
+    const { aggregate_uuid: gameId, create_time: timestamp, event_data: data } = event;
+    const { gameType, playerIds, betAmount } = data;
     return new GameCreatedEvent(
         gameId,
         timestamp,
-        new GameCreatedMetadata(gameType, playerIds, betAmount),
+        new GameCreatedData(gameType, playerIds, betAmount),
     );
 };
 // Game-Finished
@@ -43,12 +43,12 @@ const mapToPlayerActivatedEvent = (event) => {
 };
 // Player-Created
 const mapToPlayerCreatedEvent = (event) => {
-    const { aggregate_uuid: playerId, create_time: timestamp, metadata } = event;
-    const { credit } = metadata;
+    const { aggregate_uuid: playerId, create_time: timestamp, event_data: data } = event;
+    const { credit } = data;
     return new PlayerCreatedEvent(
         playerId,
         timestamp,
-        new PlayerCreatedMetadata(credit),
+        new PlayerCreatedData(credit),
     );
 };
 // Player-Deactivated
@@ -58,52 +58,52 @@ const mapToPlayerDeactivatedEvent = (event) => {
 };
 // Player-Deposit-Credit
 const mapToPlayerDepositCreditEvent = (event) => {
-    const { aggregate_uuid: playerId, create_time: timestamp, metadata } = event;
-    const { credit } = metadata;
+    const { aggregate_uuid: playerId, create_time: timestamp, event_data: data } = event;
+    const { credit } = data;
     return new PlayerDepositCreditEvent(
         playerId,
         timestamp,
-        new PlayerDepositCreditMetadata(credit),
+        new PlayerDepositCreditData(credit),
     );
 };
 // Player-Joined-To-Game
 const mapToPlayerJoinedToGameEvent = (event) => {
-    const { aggregate_uuid: playerId, create_time: timestamp, metadata } = event;
-    const { gameId, betAmount } = metadata;
+    const { aggregate_uuid: playerId, create_time: timestamp, event_data: data } = event;
+    const { gameId, betAmount } = data;
     return new PlayerJoinedToGameEvent(
         playerId,
         timestamp,
-        new PlayerJoinedToGameMetadata(gameId, betAmount),
+        new PlayerJoinedToGameData(gameId, betAmount),
     );
 };
 // Player-Lost
 const mapToPlayerLostEvent = (event) => {
-    const { aggregate_uuid: playerId, create_time: timestamp, metadata } = event;
-    const { gameId } = metadata;
+    const { aggregate_uuid: playerId, create_time: timestamp, event_data: data } = event;
+    const { gameId } = data;
     return new PlayerLostEvent(
         playerId,
         timestamp,
-        new PlayerLostMetadata(gameId),
+        new PlayerLostData(gameId),
     );
 };
 // Player-Withdraw-Credit
 const mapToPlayerWithdrawCreditEvent = (event) => {
-    const { aggregate_uuid: playerId, create_time: timestamp, metadata } = event;
-    const { credit } = metadata;
+    const { aggregate_uuid: playerId, create_time: timestamp, event_data: data } = event;
+    const { credit } = data;
     return new PlayerWithdrawCreditEvent(
         playerId,
         timestamp,
-        new PlayerWithdrawCreditMetadata(credit),
+        new PlayerWithdrawCreditData(credit),
     );
 };
 // Player-Won
 const mapToPlayerWonEvent = (event) => {
-    const { aggregate_uuid: playerId, create_time: timestamp, metadata } = event;
-    const { credit } = metadata;
+    const { aggregate_uuid: playerId, create_time: timestamp, event_data: data } = event;
+    const { credit } = data;
     return new PlayerWonEvent(
         playerId,
         timestamp,
-        new PlayerWonMetadata(credit),
+        new PlayerWonData(credit),
     );
 };
 
@@ -140,7 +140,15 @@ const map = (event) => {
 
 module.exports = {
     map,
-    mapToGameCreatedEvent,
     mapToDiceRolledEvent,
+    mapToGameCreatedEvent,
+    mapToGameFinishedEvent,
+    mapToPlayerActivatedEvent,
+    mapToPlayerCreatedEvent,
+    mapToPlayerDeactivatedEvent,
+    mapToPlayerDepositCreditEvent,
     mapToPlayerJoinedToGameEvent,
+    mapToPlayerLostEvent,
+    mapToPlayerWithdrawCreditEvent,
+    mapToPlayerWonEvent,
 };

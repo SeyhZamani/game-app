@@ -4,7 +4,7 @@ const aggregateTypes = require('../../models/aggregate-types');
 const eventTypes = require('../../models/event-types');
 
 class BaseEvent {
-    constructor(aggregateId, aggregateTypeId, eventTypeId, timestamp, metadata) {
+    constructor(aggregateId, aggregateTypeId, eventTypeId, timestamp, data) {
         if (!validator.isUUID(aggregateId)) {
             throw new TypeError('BaseEvent requires valid aggregateId!');
         }
@@ -17,14 +17,14 @@ class BaseEvent {
         if (!timestamp || !moment(timestamp).isValid()) {
             throw new TypeError('BaseEvent requires valid timestamp!');
         }
-        if (metadata && !validator.isJSON(metadata)) {
-            throw new TypeError('BaseEvent requires valid JSON metadata!');
+        if (data && !validator.isJSON(data)) {
+            throw new TypeError('BaseEvent requires valid JSON data!');
         }
         this.aggregate_uuid = aggregateId;
         this.aggregate_type_id = aggregateTypeId;
         this.event_type_id = eventTypeId;
         this.create_time = moment(timestamp).toDate();
-        this.metadata = metadata;
+        this.event_data = data;
     }
 
     getAggregateId() {
@@ -43,8 +43,8 @@ class BaseEvent {
         return this.create_time;
     }
 
-    getMetadata() {
-        throw new Error('getMatdata must be implemeted in derived classes!');
+    getData() {
+        throw new Error('getData must be implemeted in derived classes!');
     }
 }
 

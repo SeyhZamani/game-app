@@ -14,7 +14,7 @@ class PlayerDeactivatedEvent extends BaseEvent {
         );
     }
 
-    getMetadata() {
+    getData() {
         return null;
     }
 }
