@@ -4,7 +4,8 @@ const logger = require('./utils/logger');
 const baseRouter = require('./routes');
 const errorHandlerMiddlware = require('./middlewares/error-handler-middleware');
 
-const createServer = () => {
+
+const setupServer = () => {
     const app = express();
     const PORT = process.env.PORT || 3000;
 
@@ -22,7 +23,6 @@ const createServer = () => {
     return app;
 };
 
-
 module.exports = {
-    createServer,
+    setupServer,
 };
