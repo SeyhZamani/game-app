@@ -1,10 +1,6 @@
 {
     "extends": [
-        "airbnb-base",
-        "plugin:flowtype/recommended"
-    ],
-    "plugins": [
-        "flowtype"
+        "airbnb-base"
     ],
     "rules": {
         "linebreak-style": ["error", "windows"],

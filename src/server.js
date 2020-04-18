@@ -13,9 +13,8 @@ const setupServer = () => {
         extended: true,
     }));
     app.use(bodyParser.json());
-    app.use(errorHandlerMiddlware);
     app.use('/api', baseRouter);
-
+    app.use(errorHandlerMiddlware);
     app.listen(PORT, () => {
         logger.info(`Game-App is listening on port: ${PORT} ...`);
     });
