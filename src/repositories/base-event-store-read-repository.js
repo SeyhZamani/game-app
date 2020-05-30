@@ -1,4 +1,4 @@
-const { knex } = require('../utils/database');
+const dbAdapter = require('../utils/database');
 const { map: mapToEventObject } = require('../mappers/event-record-to-event-object-mapper');
 
 
@@ -11,7 +11,8 @@ class BaseEventStoreReadRepository {
     }
 
     getAllById(id) {
-        return knex('event_store')
+        const db = dbAdapter.getDB();
+        return db('event_store')
             .where({
                 aggregate_uuid: id,
                 aggregate_type_id: this.aggregateTypeId,

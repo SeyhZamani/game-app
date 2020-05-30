@@ -1,8 +1,9 @@
-const { knex } = require('../utils/database');
+const dbAdapter = require('../utils/database');
 
 class BaseEventStoreWriteRepository {
     create(event) {
-        return knex('event_store').insert(event);
+        const db = dbAdapter.getDB();
+        return db('event_store').insert(event);
     }
 }
 

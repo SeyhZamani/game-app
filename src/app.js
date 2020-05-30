@@ -1,30 +1,33 @@
-const { knex, authenticate } = require('./utils/database');
-const kafka = require('./kafka');
+const dbAdapter = require('./utils/database');
+const kafkaAdapter = require('./kafka');
 const logger = require('./utils/logger');
 
 const { setupServer } = require('./server');
 
 const run = async () => {
-    await authenticate(knex);
-    kafka.initiate();
-    const server = setupServer();
+    try {
+        await dbAdapter.init();
+        await dbAdapter.authenticate();
+        await kafkaAdapter.initiate();
 
-    process.on('SIGTERM', () => {
-        logger.info('Got SIGTERM. Gracefully shutdown is starting..');
-        server.close((serverCloseErr) => {
-            if (serverCloseErr) {
-                logger.error(serverCloseErr);
-                process.exit(1);
-            }
-            knex.destroy((dbCloseError) => {
-                if (dbCloseError) {
-                    logger.error(dbCloseError);
+        const server = setupServer();
+
+        process.on('SIGTERM', async () => {
+            logger.info('Got SIGTERM. Gracefully shutdown is starting..');
+            server.close(async (serverCloseErr) => {
+                if (serverCloseErr) {
+                    logger.error(serverCloseErr);
                     process.exit(1);
                 }
+                await kafkaAdapter.disconnect();
+                await dbAdapter.disconnect();
                 process.exit();
             });
         });
-    });
+    } catch (err) {
+        logger.error(err);
+        process.exit(1);
+    }
 };
 
 run();

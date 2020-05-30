@@ -1,5 +1,5 @@
 const topics = {
-    PLAYER_CREATED: 'player-created',
+    PLAYER_CREATED: 'user-created',
     PLAYER_DEACTIVATED: 'player-deactivated',
     PLAYER_ACTIVATED: 'player-activated',
     PLAYER_DEPOSIT_CREDIT: 'player-deposit-credit',
